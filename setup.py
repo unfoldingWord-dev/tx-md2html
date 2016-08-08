@@ -34,11 +34,15 @@ setup(
     packages=['register', 'obs'],
     long_description=read('README.md'),
     classifiers=[],
-    requires=[
+    dependency_links=[
+        'git+git://github.com/unfoldingWord-dev/uw_tools.git#egg=uw_tools',
+    ],
+    install_requires=[
         'markdown',
         'requests',
-        'git+git://github.com/unfoldingWord-dev/uw_tools.git#egg=uw_tools'
+        'uw_tools'
     ],
+    test_suite='tests',
     cmdclass={
         'install': PostInstallCommand
     }
