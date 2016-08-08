@@ -8,7 +8,6 @@ import shutil
 import sys
 import tempfile
 from contextlib import closing
-
 import markdown
 from general_tools.file_utils import unzip, load_json_object, make_dir, write_file
 from general_tools.print_utils import print_error, print_warning, print_ok
@@ -21,11 +20,7 @@ class TransformOBS(object):
 
     def __init__(self, source_repo_url, output_directory):
 
-        if 'git.door43.org' not in source_repo_url:
-            print_warning('Currently only git.door43.org repositories are supported.')
-            sys.exit(0)
-
-        self.temp_dir = ''
+        self.temp_dir = tempfile.mkdtemp(prefix='txOBS_')
         self.errors = []
         self.source_repo_url = source_repo_url
         self.output_directory = output_directory
@@ -37,9 +32,11 @@ class TransformOBS(object):
 
     def run(self):
 
-        try:
-            self.temp_dir = tempfile.mkdtemp(prefix='txOBS_')
+        if 'git.door43.org' not in self.source_repo_url:
+            print_warning('Currently only git.door43.org repositories are supported.')
+            sys.exit(0)
 
+        try:
             # clean up the git repo url
             if self.source_repo_url[-4:] == '.git':
                 self.source_repo_url = self.source_repo_url[:-4]
@@ -114,7 +111,7 @@ class TransformOBS(object):
 
 
 if __name__ == '__main__':
-    print()
+
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-r', '--gitrepo', dest='gitrepo', default=False,
                         required=True, help='Git repository where the source can be found.')
