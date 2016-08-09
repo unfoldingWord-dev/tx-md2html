@@ -1,3 +1,8 @@
+Master: [![Build Status](https://travis-ci.org/unfoldingWord-dev/tx-md2html.svg?branch=master)](https://travis-ci.org/unfoldingWord-dev/tx-md2html) [![Coverage Status](https://coveralls.io/repos/github/unfoldingWord-dev/tx-md2html/badge.svg?branch=master)](https://coveralls.io/github/unfoldingWord-dev/tx-md2html?branch=master)
+
+Develop: [![Build Status](https://travis-ci.org/unfoldingWord-dev/tx-md2html.svg?branch=develop)](https://travis-ci.org/unfoldingWord-dev/tx-md2html) [![Coverage Status](https://coveralls.io/repos/github/unfoldingWord-dev/tx-md2html/badge.svg?branch=develop)](https://coveralls.io/github/unfoldingWord-dev/tx-md2html?branch=develop)
+
+
 # unfoldingWord Transform markdown to HTML
 
 A library of Python scripts to convert a git repository into publishable text.
