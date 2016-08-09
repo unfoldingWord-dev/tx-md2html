@@ -1,6 +1,4 @@
-Master: [![Build Status](https://travis-ci.org/unfoldingWord-dev/tx-md2html.svg?branch=master)](https://travis-ci.org/unfoldingWord-dev/tx-md2html) [![Coverage Status](https://coveralls.io/repos/github/unfoldingWord-dev/tx-md2html/badge.svg?branch=master)](https://coveralls.io/github/unfoldingWord-dev/tx-md2html?branch=master)
-
-Develop: [![Build Status](https://travis-ci.org/unfoldingWord-dev/tx-md2html.svg?branch=develop)](https://travis-ci.org/unfoldingWord-dev/tx-md2html) [![Coverage Status](https://coveralls.io/repos/github/unfoldingWord-dev/tx-md2html/badge.svg?branch=develop)](https://coveralls.io/github/unfoldingWord-dev/tx-md2html?branch=develop)
+[![Build Status](https://travis-ci.org/unfoldingWord-dev/tx-md2html.svg)](https://travis-ci.org/unfoldingWord-dev/tx-md2html) [![Coverage Status](https://coveralls.io/repos/github/unfoldingWord-dev/tx-md2html/badge.svg)](https://coveralls.io/github/unfoldingWord-dev/tx-md2html)
 
 
 # unfoldingWord Transform markdown to HTML
