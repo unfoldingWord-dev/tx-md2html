@@ -39,6 +39,7 @@ setup(
         'requests',
         'git+git://github.com/unfoldingWord-dev/uw_tools.git#egg=uw_tools'
     ],
+    test_suite='tests',
     cmdclass={
         'install': PostInstallCommand
     }

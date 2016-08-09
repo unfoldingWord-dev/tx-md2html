@@ -18,12 +18,13 @@ class TransformOBS(object):
 
     dir_re = re.compile(r'(<div\s.*?class=".*?obs-content.*?">).*?(</div>)', re.UNICODE + re.DOTALL)
 
-    def __init__(self, source_repo_url, output_directory):
+    def __init__(self, source_repo_url, output_directory, quiet):
 
         self.temp_dir = tempfile.mkdtemp(prefix='txOBS_')
         self.errors = []
         self.source_repo_url = source_repo_url
         self.output_directory = output_directory
+        self.quiet = quiet
 
     def close(self):
         # delete temp files
@@ -49,32 +50,39 @@ class TransformOBS(object):
             repo_dir = self.source_repo_url.rpartition('/')[2]
             downloaded_file = os.path.join(self.temp_dir, repo_dir + '.zip')
             try:
-                print('Downloading {0}...'.format(file_to_download), end=' ')
+                if not self.quiet:
+                    print('Downloading {0}...'.format(file_to_download), end=' ')
                 if not os.path.isfile(downloaded_file):
                     download_file(file_to_download, downloaded_file)
             finally:
-                print('finished.')
+                if not self.quiet:
+                    print('finished.')
 
             # unzip the archive
             try:
-                print('Unzipping...'.format(downloaded_file), end=' ')
+                if not self.quiet:
+                    print('Unzipping...'.format(downloaded_file), end=' ')
                 unzip(downloaded_file, self.temp_dir)
             finally:
-                print('finished.')
+                if not self.quiet:
+                    print('finished.')
 
             # get the manifest
             try:
-                print('Reading the manifest...', end=' ')
+                if not self.quiet:
+                    print('Reading the manifest...', end=' ')
                 manifest = load_json_object(os.path.join(self.temp_dir, 'manifest.json'))
             finally:
-                print('finished.')
+                if not self.quiet:
+                    print('finished.')
 
             # create output directory
             make_dir(self.output_directory)
 
             # read the markdown files and output html files
             try:
-                print('Processing the OBS markdown files')
+                if not self.quiet:
+                    print('Processing the OBS markdown files')
                 files_to_process = []
                 for i in range(1, 51):
                     files_to_process.append(str(i).zfill(2) + '.md')
@@ -103,7 +111,8 @@ class TransformOBS(object):
                 self.errors.append(e)
 
             finally:
-                print('finished.')
+                if not self.quiet:
+                    print('finished.')
 
         except Exception as e:
             print_error(e.message)
@@ -117,11 +126,12 @@ if __name__ == '__main__':
                         required=True, help='Git repository where the source can be found.')
     parser.add_argument('-o', '--outdir', dest='outdir', default=False,
                         required=True, help='The output directory for markdown files.')
+    parser.add_argument('-q', '--quiet', dest='quiet', action='store_true', help='Minimize console output.')
 
     args = parser.parse_args(sys.argv[1:])
 
     # call with closing to be sure the temp files get cleaned up
-    with closing(TransformOBS(args.gitrepo, args.outdir)) as tx:
+    with closing(TransformOBS(args.gitrepo, args.outdir, args.quiet)) as tx:
         tx.run()
 
     print_ok('ALL FINISHED: ', 'Please check the output directory.')
