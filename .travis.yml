@@ -3,7 +3,8 @@ python:
   - '2.7'
   - '3.5'
 install:
-  - pip install -r requirements.txt
+  - pip install -r functions/convert/requirements.txt -t functions/convert
+  - pip install -r functions/register/requirements.txt -t functions/register
   - pip install coveralls
 script: coverage run --source=obs test-setup.py test
 after_success: coveralls

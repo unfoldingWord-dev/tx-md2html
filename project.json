@@ -1,0 +1,9 @@
+
+{
+  "name": "tx-md2html",
+  "description": "MD to HTML Converter",
+  "memory": 512,
+  "timeout": 300,
+  "role": "arn:aws:iam::581647696645:role/tx_lambda_function",
+  "environment": {}
+}

@@ -1,2 +1,11 @@
 .idea/
 *.iml
+
+functions/convert/*
+!functions/convert/main.py
+!functions/convert/requirements.txt
+!functions/convert/template.html
+
+functions/register/*
+!functions/register/main.py
+!functions/register/requirements.txt
