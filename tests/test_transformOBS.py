@@ -4,7 +4,7 @@ import shutil
 import tempfile
 from contextlib import closing
 import unittest
-from obs.transform import TransformOBS
+from functions.convert.transform_obs import TransformOBS
 
 
 class TestTransformOBS(unittest.TestCase):
