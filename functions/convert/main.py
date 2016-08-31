@@ -19,9 +19,6 @@ from general_tools.file_utils import unzip, add_file_to_zip, make_dir, write_fil
 from general_tools.print_utils import print_error, print_ok
 from general_tools.url_utils import download_file
 
-event = {}
-context = {}
-
 class TransformOBS(object):
 
     dirRe = re.compile(r'(<div\s.*?class=".*?obs-content.*?">).*?(</div>)', re.UNICODE + re.DOTALL)
@@ -43,8 +40,6 @@ class TransformOBS(object):
             shutil.rmtree(self.filesDir, ignore_errors=True)
 
     def run(self):
-        global event, context
-
         try:
             # download the archive
             fileToDownload = self.source_url
@@ -107,11 +102,7 @@ class TransformOBS(object):
             self.errors.append(e)
 
 
-def handle(e, ctx):
-    global event, context, data
-    event = e
-    context = ctx
-
+def handle(event, context):
     if not 'data' in event:
         raise Exception('"data" was not in payload')
     data = event['data']
@@ -166,4 +157,5 @@ def handle(e, ctx):
 
     return {
         'success': True,
+        'output': job['output'],
     }

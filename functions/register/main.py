@@ -23,4 +23,3 @@ def handle(event, ctx):
 
     response = requests.post(post_url, data=post_data, headers={'content-type': 'application/json'})
     return json.loads(response.text)
-
