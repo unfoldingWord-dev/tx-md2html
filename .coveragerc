@@ -1,0 +1,12 @@
+[run]
+source =
+    functions
+
+omit =
+    */convert/requests/*
+    */convert/general_tools/*
+    */convert/markdown/*
+    */convert/Markdown-2.6.6-py2.7.egg-info/*
+    */convert/requests-2.11.1.dist-info/*
+    */convert/uw/*
+    */convert/uw_tools-0.0.3-py2.7.egg-info/*
