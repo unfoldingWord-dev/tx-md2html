@@ -1,2 +1,15 @@
 .idea/
 *.iml
+
+functions/convert/*
+!functions/convert/main.py
+!functions/convert/requirements.txt
+!functions/convert/template.html
+!functions/convert/transform_obs.py
+!functions/convert/transform_ta.py
+!functions/convert/transform_tn.py
+!functions/convert/transform_tw.py
+
+functions/register/*
+!functions/register/main.py
+!functions/register/requirements.txt
