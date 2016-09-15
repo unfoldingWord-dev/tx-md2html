@@ -76,22 +76,26 @@ def handle(event, context):
         if resource == 'obs':
             # call with closing to be sure the temp files get cleaned up
             with closing(transform_obs.TransformOBS(source, output_dir, options)) as obs:
-                obs.run()
-                log.extend(obs.log)
-                errors.extend(obs.errors)
-                warnings.extend(obs.warnings)
+                try:
+                    obs.run()
+                except Exception as e:
+                    error_message(errors, e.message)
+                finally:
+                    log.extend(obs.log)
+                    errors.extend(obs.errors)
+                    warnings.extend(obs.warnings)
         # --- Add other resources here when implemented ---
         else:
             raise Exception('Resource "{0}" not currently supported'.format(resource))
-        
-        zip_file = os.path.join(tempfile.gettempdir(), context.aws_request_id+'.zip')
-        for filename in glob(os.path.join(output_dir, '*.html')):
-            add_file_to_zip(zip_file, filename, os.path.basename(filename))
-        
-        log_message(log, "Uploading {0} to {1}/{2}".format(os.path.basename(zip_file), cdn_bucket, cdn_file))
-        s3_client = boto3.client('s3')
-        s3_client.upload_file(zip_file, cdn_bucket, cdn_file)
-        log_message(log, "Upload was successful.")
+
+        if not len(errors):
+            zip_file = os.path.join(tempfile.gettempdir(), context.aws_request_id+'.zip')
+            for filename in glob(os.path.join(output_dir, '*.html')):
+                add_file_to_zip(zip_file, filename, os.path.basename(filename))
+            log_message(log, "Uploading {0} to {1}/{2}".format(os.path.basename(zip_file), cdn_bucket, cdn_file))
+            s3_client = boto3.client('s3')
+            s3_client.upload_file(zip_file, cdn_bucket, cdn_file)
+            log_message(log, "Upload was successful.")
     except Exception as e:
         error_message(errors, e.message)
 

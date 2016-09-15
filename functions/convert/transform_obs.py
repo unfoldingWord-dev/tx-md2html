@@ -48,59 +48,51 @@ class TransformOBS(object):
             shutil.rmtree(self.files_dir, ignore_errors=True)
 
     def run(self):
-        try:
-            # download the archive
-            file_to_download = self.source_url
-            filename = self.source_url.rpartition('/')[2]
-            downloaded_file = os.path.join(self.download_dir, filename)
+        # download the archive
+        file_to_download = self.source_url
+        filename = self.source_url.rpartition('/')[2]
+        downloaded_file = os.path.join(self.download_dir, filename)
+        self.log_message('Downloading {0}...'.format(file_to_download))
+        if not os.path.isfile(downloaded_file):
             try:
-                self.log_message('Downloading {0}...'.format(file_to_download))
+                download_file(file_to_download, downloaded_file)
+            finally:
                 if not os.path.isfile(downloaded_file):
-                    download_file(file_to_download, downloaded_file)
-            finally:
-                self.log_message('Download successful.')
+                    raise Exception("Failed to download {0}".format(file_to_download))
+                else:
+                    self.log_message('Download successful.')
 
-            # unzip the archive
-            try:
-                self.log_message('Unzipping {0}...'.format(downloaded_file))
-                unzip(downloaded_file, self.files_dir)
-            finally:
-                self.log_message('Unzip successful.')
+        # unzip the archive
+        self.log_message('Unzipping {0}...'.format(downloaded_file))
+        unzip(downloaded_file, self.files_dir)
+        self.log_message('Unzip successful.')
 
-            # create output directory
-            make_dir(self.output_dir)
+        # create output directory
+        make_dir(self.output_dir)
 
-            # read the markdown files and output html files
-            try:
-                self.log_message('Processing the OBS markdown files')
+        # read the markdown files and output html files
+        self.log_message('Processing the OBS markdown files')
 
-                files_to_process = sorted(glob(os.path.join(self.files_dir, '*.md')))
+        files_to_process = sorted(glob(os.path.join(self.files_dir, '*.md')))
 
-                current_dir = os.path.dirname(os.path.realpath(__file__))
+        current_dir = os.path.dirname(os.path.realpath(__file__))
 
-                with open(os.path.join(current_dir, 'template.html')) as template_file:
-                    html_template = string.Template(template_file.read())
+        with open(os.path.join(current_dir, 'template.html')) as template_file:
+            html_template = string.Template(template_file.read())
 
-                complete_html = ''
-                for filename in files_to_process:
-                    # read the markdown file
-                    with codecs.open(filename, 'r', 'utf-8-sig') as md_file:
-                        md = md_file.read()
-                        html = markdown.markdown(md)
-                        complete_html += html
-                        html = html_template.safe_substitute(content=html)
-                        html_filename = os.path.splitext(os.path.basename(filename))[0]+".html"
-                        write_file(os.path.join(self.output_dir, html_filename), html)
-                        self.log_message('Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
+        complete_html = ''
+        for filename in files_to_process:
+            # read the markdown file
+            with codecs.open(filename, 'r', 'utf-8-sig') as md_file:
+                md = md_file.read()
+                html = markdown.markdown(md)
+                complete_html += html
+                html = html_template.safe_substitute(content=html)
+                html_filename = os.path.splitext(os.path.basename(filename))[0]+".html"
+                write_file(os.path.join(self.output_dir, html_filename), html)
+                self.log_message('Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
 
-                complete_html = html_template.safe_substitute(content=complete_html)
-                write_file(os.path.join(self.output_dir, 'all.html'), complete_html)
-                self.log_message('Made one HTML of all stories in all.html.')
-            except IOError as ioe:
-                self.error_message('{0}: {1}'.format(ioe.strerror, ioe.filename))
-            except Exception as e:
-                self.error_message(e.message)
-            finally:
-                self.log_message('Finished processing Markdown files.')
-        except Exception as e:
-            self.error_message(e.message)
+        complete_html = html_template.safe_substitute(content=complete_html)
+        write_file(os.path.join(self.output_dir, 'all.html'), complete_html)
+        self.log_message('Made one HTML of all stories in all.html.')
+        self.log_message('Finished processing Markdown files.')
