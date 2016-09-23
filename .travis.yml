@@ -19,12 +19,14 @@ deploy:
 - provider: script
   skip_cleanup: true
   script:
-  - ./apex deploy 
+  - ./apex deploy
+  - ./apex invoke register
   on:
     branch: develop
 - provider: script
   skip_cleanup: true
   script:
   - ./apex deploy --env master
+  - ./apex invoke --env register
   on:
     branch: master
