@@ -3,26 +3,20 @@
 # Method for  registering this module
 
 from __future__ import print_function, unicode_literals
+
 import requests
 import json
+import os
 
 
 def handle(event, ctx):
     if not 'api_url' in event:
         raise Exception("'api_url' not in payload")
 
-    post_url = event['api_url']+'/rich-tx/module'
-    post_data = {
-        "name": "tx-md2html_convert",
-        "version": "1",
-        "type": "conversion",
-        "resource_types": ["obs"],
-        "input_format": ["md"],
-        "output_format": ["html"],
-        "options": [],
-        "private_links": [],
-        "public_links": []
-    }
+    with open('module.json') as data_file:
+        data = json.load(data_file)
 
-    response = requests.post(post_url, data=post_data, headers={'content-type': 'application/json'})
+    url = event['api_url']+'/tx/module'
+
+    response = requests.post(url, data=data, headers={'content-type': 'application/json'})
     return json.loads(response.text)
