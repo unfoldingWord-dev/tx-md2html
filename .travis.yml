@@ -27,6 +27,6 @@ deploy:
   skip_cleanup: true
   script:
   - ./apex deploy --env master
-  - ./apex invoke --env register
+  - ./apex invoke register
   on:
     branch: master
