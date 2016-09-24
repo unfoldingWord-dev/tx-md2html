@@ -72,6 +72,7 @@ def handle(event, context):
     
     output_dir = os.path.join(tempfile.gettempdir(), context.aws_request_id)
 
+    success = False
     try:
         if resource == 'obs':
             # call with closing to be sure the temp files get cleaned up
@@ -96,6 +97,7 @@ def handle(event, context):
             s3_client = boto3.client('s3')
             s3_client.upload_file(zip_file, cdn_bucket, cdn_file)
             log_message(log, "Upload was successful.")
+            success = True
     except Exception as e:
         error_message(errors, e.message)
 
@@ -103,5 +105,5 @@ def handle(event, context):
         'log': log,
         'errors': errors,
         'warnings': warnings,
-        'success': (len(errors) > 0)
+        'success': success
     }
