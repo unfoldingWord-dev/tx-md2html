@@ -14,7 +14,7 @@ import string
 from glob import glob
 from general_tools.file_utils import unzip, make_dir, write_file
 from general_tools.url_utils import download_file
-
+from door43_tools.obs_handler import OBSInspection
 
 class TransformOBS(object):
 
@@ -91,6 +91,11 @@ class TransformOBS(object):
                 html_filename = os.path.splitext(os.path.basename(filename))[0]+".html"
                 write_file(os.path.join(self.output_dir, html_filename), html)
                 self.log_message('Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
+
+        # Do the OBS inspection
+        warnings = OBSInspection(self.output_dir).run()
+        for warning in warnings:
+            self.warning_message(warning)
 
         complete_html = html_template.safe_substitute(content=complete_html)
         write_file(os.path.join(self.output_dir, 'all.html'), complete_html)
