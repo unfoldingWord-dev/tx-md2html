@@ -76,15 +76,15 @@ def handle(event, context):
     try:
         if resource == 'obs':
             # call with closing to be sure the temp files get cleaned up
-            with closing(transform_obs.TransformOBS(source, output_dir, options)) as obs:
-                try:
-                    obs.run()
-                except Exception as e:
-                    error_message(errors, e.message)
-                finally:
-                    log.extend(obs.log)
-                    errors.extend(obs.errors)
-                    warnings.extend(obs.warnings)
+            try:
+                obs = transform_obs.TransformOBS(source, output_dir, options)
+                obs.run()
+            except Exception as e:
+                error_message(errors, e.message)
+            finally:
+                log.extend(obs.log)
+                errors.extend(obs.errors)
+                warnings.extend(obs.warnings)
         # --- Add other resources here when implemented ---
         else:
             raise Exception('Resource "{0}" not currently supported'.format(resource))
@@ -99,7 +99,7 @@ def handle(event, context):
             log_message(log, "Upload was successful.")
             success = True
     except Exception as e:
-        error_message(errors, e.message)
+        error_message(errors, '2'+e.message)
 
     return {
         'log': log,
