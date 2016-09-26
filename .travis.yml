@@ -18,12 +18,11 @@ after_success:
 deploy:
 - provider: script
   skip_cleanup: true
-  script: ./apex deploy && ./register_module.sh https://test-api.door43.org/tx/module
-  on:
-    branch: develop
-- provider: script
-  skip_cleanup: true
   script: ./apex deploy --env master && ./register_module.sh https://api.door43.org/tx/module
   on:
     branch: master
-
+- provider: script
+  skip_cleanup: true
+  script: ./apex deploy && ./register_module.sh https://test-api.door43.org/tx/module
+  on:
+    branch: develop
