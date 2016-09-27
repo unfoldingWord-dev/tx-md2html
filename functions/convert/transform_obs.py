@@ -16,6 +16,7 @@ from general_tools.file_utils import unzip, make_dir, write_file
 from general_tools.url_utils import download_file
 from door43_tools.obs_handler import OBSInspection
 
+
 class TransformOBS(object):
 
     def __init__(self, source_url, output_dir, options):
