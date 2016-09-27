@@ -12,9 +12,11 @@ import markdown
 import string
 
 from glob import glob
+from shutil import copyfile
 from general_tools.file_utils import unzip, make_dir, write_file
 from general_tools.url_utils import download_file
 from door43_tools.obs_handler import OBSInspection
+
 
 class TransformOBS(object):
 
@@ -91,6 +93,10 @@ class TransformOBS(object):
                 html_filename = os.path.splitext(os.path.basename(filename))[0]+".html"
                 write_file(os.path.join(self.output_dir, html_filename), html)
                 self.log_message('Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
+
+        manifest_file = os.path.join(self.files_dir, 'manifest.json')
+        if os.path.isfile(manifest_file):
+            copyfile(manifest_file, os.path.join(self.output_dir, 'manifest.json'))
 
         # Do the OBS inspection
         warnings = OBSInspection(self.output_dir).run()

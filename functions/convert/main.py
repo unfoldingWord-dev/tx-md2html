@@ -11,7 +11,7 @@ import boto3
 import transform_obs
 
 from glob import glob
-from contextlib import closing
+from shutil import copyfile
 
 from general_tools.file_utils import add_file_to_zip
 
