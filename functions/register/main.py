@@ -6,7 +6,6 @@ from __future__ import print_function, unicode_literals
 
 import requests
 import json
-import os
 
 
 def handle(event, ctx):

@@ -6,14 +6,12 @@ from __future__ import print_function, unicode_literals
 
 import os
 import tempfile
-import boto3
-
 import transform_obs
 
 from glob import glob
-from shutil import copyfile
-
+from aws_tools.s3_handler import S3Handler
 from general_tools.file_utils import add_file_to_zip
+
 
 def log_message(log, message):
     print('{0}: {1}'.format('tx-md2html_convert', message))
@@ -76,8 +74,8 @@ def handle(event, context):
     try:
         if resource == 'obs':
             # call with closing to be sure the temp files get cleaned up
+            obs = transform_obs.TransformOBS(source, output_dir, options)
             try:
-                obs = transform_obs.TransformOBS(source, output_dir, options)
                 obs.run()
             except Exception as e:
                 error_message(errors, e.message)
@@ -94,12 +92,12 @@ def handle(event, context):
             for filename in glob(os.path.join(output_dir, '*.html')):
                 add_file_to_zip(zip_file, filename, os.path.basename(filename))
             log_message(log, "Uploading {0} to {1}/{2}".format(os.path.basename(zip_file), cdn_bucket, cdn_file))
-            s3_client = boto3.client('s3')
-            s3_client.upload_file(zip_file, cdn_bucket, cdn_file)
+            cdn_handler = S3Handler(cdn_bucket)
+            cdn_handler.upload_file(zip_file, cdn_file)
             log_message(log, "Upload was successful.")
             success = True
     except Exception as e:
-        error_message(errors, '2'+e.message)
+        error_message(errors, e.message)
 
     return {
         'log': log,
