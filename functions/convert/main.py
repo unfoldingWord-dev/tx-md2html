@@ -14,18 +14,18 @@ from general_tools.file_utils import add_file_to_zip
 
 
 def log_message(log, message):
-    print('{0}: {1}'.format('tx-md2html_convert', message))
-    log.append('{0}: {1}'.format('tx-md2html_convert', message))
+    print(message)
+    log.append(message)
 
 
 def error_message(errors, message):
-    print('{0}: {1}'.format('tx-md2html_convert', message))
-    errors.append('{0}: {1}'.format('tx-md2html_convert', message))
+    print(message)
+    errors.append(message)
 
 
 def warning_message(warnings, message):
-    print('{0}: {1}'.format('tx-md2html_convert', message))
-    warnings.append('{0}: {1}'.format('tx-md2html_convert', message))
+    print(message)
+    warnings.append(message)
 
 
 def handle(event, context):
@@ -74,15 +74,15 @@ def handle(event, context):
     try:
         if resource == 'obs':
             # call with closing to be sure the temp files get cleaned up
-            obs = transform_obs.TransformOBS(source, output_dir, options)
+            converter = transform_obs.TransformOBS(source, output_dir, options)
             try:
-                obs.run()
+                converter.run()
             except Exception as e:
                 error_message(errors, e.message)
             finally:
-                log.extend(obs.log)
-                errors.extend(obs.errors)
-                warnings.extend(obs.warnings)
+                log.extend(converter.log)
+                errors.extend(converter.errors)
+                warnings.extend(converter.warnings)
         # --- Add other resources here when implemented ---
         else:
             raise Exception('Resource "{0}" not currently supported'.format(resource))

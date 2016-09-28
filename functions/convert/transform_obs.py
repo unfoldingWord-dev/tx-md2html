@@ -87,14 +87,13 @@ class TransformOBS(object):
                 # read the markdown file
                 with codecs.open(filename, 'r', 'utf-8-sig') as md_file:
                     md = md_file.read()
-                    html = markdown.markdown(md)
-                    complete_html += html
-                    html = html_template.safe_substitute(content=html)
-                    html_filename = os.path.splitext(os.path.basename(filename))[0] + ".html"
-                    output_file = os.path.join(self.output_dir, html_filename)
-                    write_file(output_file, html)
-                    self.log_message(
-                        'Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
+                html = markdown.markdown(md)
+                complete_html += html
+                html = html_template.safe_substitute(content=html)
+                html_filename = os.path.splitext(os.path.basename(filename))[0] + ".html"
+                output_file = os.path.join(self.output_dir, html_filename)
+                write_file(output_file, html)
+                self.log_message('Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
             else:
                 output_file = os.path.join(self.output_dir, os.path.basename(filename))
                 copyfile(filename, output_file)
