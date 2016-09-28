@@ -97,7 +97,7 @@ def handle(event, context):
             log_message(log, "Upload was successful.")
             success = True
     except Exception as e:
-        error_message(errors, '2'+e.message)
+        error_message(errors, e.message)
 
     return {
         'log': log,

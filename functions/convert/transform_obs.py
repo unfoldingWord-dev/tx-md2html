@@ -12,6 +12,7 @@ import markdown
 import string
 
 from glob import glob
+from shutil import copyfile
 from general_tools.file_utils import unzip, make_dir, write_file
 from general_tools.url_utils import download_file
 from door43_tools.obs_handler import OBSInspection
@@ -30,16 +31,16 @@ class TransformOBS(object):
         self.errors = []
 
     def log_message(self, message):
-        print('{0}: {1}'.format('tx-md2html_convert', message))
-        self.log.append('{0}: {1}'.format('tx-md2html_convert', message))
+        print(message)
+        self.log.append(message)
 
     def error_message(self, message):
-        print('{0}: {1}'.format('tx-md2html_convert', message))
-        self.errors.append('{0}: {1}'.format('tx-md2html_convert', message))
+        print(message)
+        self.errors.append(message)
 
     def warning_message(self, message):
-        print('{0}: {1}'.format('tx-md2html_convert', message))
-        self.warnings.append('{0}: {1}'.format('tx-md2html_convert', message))
+        print(message)
+        self.warnings.append(message)
 
     def close(self):
         # delete temp files
@@ -74,29 +75,37 @@ class TransformOBS(object):
         # read the markdown files and output html files
         self.log_message('Processing the OBS markdown files')
 
-        files_to_process = sorted(glob(os.path.join(self.files_dir, '*.md')))
+        files = sorted(glob(os.path.join(self.files_dir, '*')))
 
         current_dir = os.path.dirname(os.path.realpath(__file__))
-
         with open(os.path.join(current_dir, 'obs-template.html')) as template_file:
             html_template = string.Template(template_file.read())
 
         complete_html = ''
-        for filename in files_to_process:
-            # read the markdown file
-            with codecs.open(filename, 'r', 'utf-8-sig') as md_file:
-                md = md_file.read()
-                html = markdown.markdown(md)
-                complete_html += html
-                html = html_template.safe_substitute(content=html)
-                html_filename = os.path.splitext(os.path.basename(filename))[0]+".html"
-                write_file(os.path.join(self.output_dir, html_filename), html)
-                self.log_message('Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
+        for filename in files:
+            if filename.endswith('.md'):
+                # read the markdown file
+                with codecs.open(filename, 'r', 'utf-8-sig') as md_file:
+                    md = md_file.read()
+                    html = markdown.markdown(md)
+                    complete_html += html
+                    html = html_template.safe_substitute(content=html)
+                    html_filename = os.path.splitext(os.path.basename(filename))[0] + ".html"
+                    output_file = os.path.join(self.output_dir, html_filename)
+                    write_file(output_file, html)
+                    self.log_message(
+                        'Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
+            else:
+                output_file = os.path.join(self.output_dir, os.path.basename(filename))
+                copyfile(filename, output_file)
 
         # Do the OBS inspection
-        warnings = OBSInspection(self.output_dir).run()
-        for warning in warnings:
+        inspector = OBSInspection(self.output_dir)
+        inspector.run()
+        for warning in inspector.warnings:
             self.warning_message(warning)
+        for error in inspector.errors:
+            self.error_message(error)
 
         complete_html = html_template.safe_substitute(content=complete_html)
         write_file(os.path.join(self.output_dir, 'all.html'), complete_html)
