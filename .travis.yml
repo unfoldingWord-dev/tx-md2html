@@ -26,3 +26,4 @@ deploy:
   script: ./apex deploy && ./register_module.sh https://test-api.door43.org/tx/module
   on:
     branch: develop
+

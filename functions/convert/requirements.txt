@@ -1,4 +1,4 @@
 markdown
 requests
-bs4
 tx-shared-tools
+
