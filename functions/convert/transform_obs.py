@@ -95,16 +95,22 @@ class TransformOBS(object):
                 write_file(output_file, html)
                 self.log_message('Converted {0} to {1}.'.format(os.path.basename(filename), os.path.basename(html_filename)))
             else:
-                output_file = os.path.join(self.output_dir, os.path.basename(filename))
-                copyfile(filename, output_file)
-
-        manifest_file = os.path.join(self.files_dir, 'manifest.json')
-        if os.path.isfile(manifest_file):
-            copyfile(manifest_file, os.path.join(self.output_dir, 'manifest.json'))
+                try:
+                    output_file = os.path.join(self.output_dir, filename[len(self.files_dir)+1:])
+                    if not os.path.exists(output_file):
+                        if not os.path.exists(os.path.dirname(output_file)):
+                            os.makedirs(os.path.dirname(output_file))
+                        copyfile(filename, output_file)
+                except Exception:
+                    pass
 
         # Do the OBS inspection
         inspector = OBSInspection(self.output_dir)
-        inspector.run()
+        try:
+            inspector.run()
+        except Exception as e:
+            self.warning_message('Failed to run OBS inspector: {0}'.format(e.message))
+
         for warning in inspector.warnings:
             self.warning_message(warning)
         for error in inspector.errors:
@@ -112,5 +118,6 @@ class TransformOBS(object):
 
         complete_html = html_template.safe_substitute(content=complete_html)
         write_file(os.path.join(self.output_dir, 'all.html'), complete_html)
+
         self.log_message('Made one HTML of all stories in all.html.')
         self.log_message('Finished processing Markdown files.')

@@ -10,7 +10,7 @@ import transform_obs
 
 from glob import glob
 from aws_tools.s3_handler import S3Handler
-from general_tools.file_utils import add_file_to_zip
+from general_tools.file_utils import add_contents_to_zip
 
 
 def log_message(log, message):
@@ -78,7 +78,10 @@ def handle(event, context):
             try:
                 converter.run()
             except Exception as e:
-                error_message(errors, e.message)
+                if e.message:
+                    error_message(errors, e.message)
+                else:
+                    error_message(errors, 'Conversion process failed to run.')
             finally:
                 log.extend(converter.log)
                 errors.extend(converter.errors)
@@ -87,17 +90,18 @@ def handle(event, context):
         else:
             raise Exception('Resource "{0}" not currently supported'.format(resource))
 
-        if not len(errors):
-            zip_file = os.path.join(tempfile.gettempdir(), context.aws_request_id+'.zip')
-            for filename in glob(os.path.join(output_dir, '*.html')):
-                add_file_to_zip(zip_file, filename, os.path.basename(filename))
-            log_message(log, "Uploading {0} to {1}/{2}".format(os.path.basename(zip_file), cdn_bucket, cdn_file))
-            cdn_handler = S3Handler(cdn_bucket)
-            cdn_handler.upload_file(zip_file, cdn_file)
-            log_message(log, "Upload was successful.")
-            success = True
+        zip_file = os.path.join(tempfile.gettempdir(), context.aws_request_id+'.zip')
+        add_contents_to_zip(zip_file, output_dir)
+        log_message(log, "Uploading {0} to {1}/{2}".format(os.path.basename(zip_file), cdn_bucket, cdn_file))
+        cdn_handler = S3Handler(cdn_bucket)
+        cdn_handler.upload_file(zip_file, cdn_file)
+        log_message(log, "Upload was successful.")
+        success = True
     except Exception as e:
-        error_message(errors, e.message)
+        if e.message:
+            error_message(errors, e.message)
+        else:
+            error_message(errors, 'Conversion process ended abnormally')
 
     return {
         'log': log,
