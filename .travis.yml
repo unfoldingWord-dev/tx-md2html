@@ -11,7 +11,7 @@ install:
 - bash install-requirements.sh
 - pip install coveralls
 script:
-- coverage run --source=obs test-setup.py test
+- coverage run test-setup.py test
 after_success:
 - coveralls
 deploy:
@@ -25,4 +25,6 @@ deploy:
   script: ./apex deploy && ./register_module.sh https://test-api.door43.org/tx/module
   on:
     branch: develop
-
+env:
+  global:
+    - PYTHONDONTWRITEBYTECODE=true
