@@ -39,38 +39,44 @@ class TestTransformOBS(unittest.TestCase):
 
     def test_close(self):
         """
-        This tests that the temp directory is deleted when the class is closed
+        This tests that the temp directories are deleted when the class is closed
         """
 
         with closing(TransformOBS('', '', True)) as tx:
-            temp_dir = tx.temp_dir
+            download_dir = tx.download_dir
+            files_dir = tx.files_dir
 
-            # verify the directory is present
-            self.assertTrue(os.path.isdir(temp_dir))
+            # verify the directories are present
+            self.assertTrue(os.path.isdir(download_dir))
+            self.assertTrue(os.path.isdir(files_dir))
 
-        # now it should have been deleted
-        self.assertFalse(os.path.isdir(temp_dir))
+        # now they should have been deleted
+        self.assertFalse(os.path.isdir(download_dir))
+        self.assertFalse(os.path.isdir(files_dir))
 
     def test_run(self):
         """
         Runs the converter and verifies the output
         """
         # test with the English OBS
-        repo = 'https://git.door43.org/Door43/en-obs.git'
+        repo = 'https://git.door43.org/Door43/en-obs/archive/master.zip'
         self.out_dir = tempfile.mkdtemp(prefix='txOBS_Test_')
         with closing(TransformOBS(repo, self.out_dir, True)) as tx:
             tx.run()
 
         # verify the output
-        files_to_verify = []
-        for i in range(1, 51):
-            files_to_verify.append(str(i).zfill(2) + '.html')
+        # 07 JAN 2017, NB: currently just one html file is being output, all.html
+        # files_to_verify = []
+        # for i in range(1, 51):
+        #     files_to_verify.append(str(i).zfill(2) + '.html')
+        #
+        # for file_to_verify in files_to_verify:
+        #
+        #     file_name = os.path.join(self.out_dir, file_to_verify)
+        #     self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
 
-        for file_to_verify in files_to_verify:
-
-            file_name = os.path.join(self.out_dir, file_to_verify)
-            self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
-
+        file_name = os.path.join(self.out_dir, 'all.html')
+        self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
 
 if __name__ == '__main__':
     unittest.main()

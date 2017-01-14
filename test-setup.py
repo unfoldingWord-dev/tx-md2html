@@ -9,16 +9,12 @@ setup(
     license="MIT",
     keywords="",
     url="https://github.org/unfoldingWord-dev/tx-md2html",
-    packages=['obs'],
     long_description='Unit test setup file',
     classifiers=[],
-    dependency_links=[
-        'git+git://github.com/unfoldingWord-dev/uw_tools.git#egg=uw_tools',
-    ],
     install_requires=[
         'markdown',
         'requests',
-        'uw_tools'
+        'tx-shared-tools'
     ],
     test_suite='tests'
 )

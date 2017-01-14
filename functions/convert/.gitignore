@@ -5,3 +5,6 @@
 !.apexignore
 !obs-template.html
 !transform_obs.py
+
+# these files are needed for unit testing on travis-ci
+!__init__.py
