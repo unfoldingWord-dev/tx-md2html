@@ -65,7 +65,7 @@ class TestTransformOBS(unittest.TestCase):
             tx.run()
 
         # verify the output
-        # 07 JAN 2017, NB: currently just one html file is being output, all.html
+        # 07 JAN 2017, NB: currently no html files are being generated
         # files_to_verify = []
         # for i in range(1, 51):
         #     files_to_verify.append(str(i).zfill(2) + '.html')
@@ -74,9 +74,6 @@ class TestTransformOBS(unittest.TestCase):
         #
         #     file_name = os.path.join(self.out_dir, file_to_verify)
         #     self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
-
-        file_name = os.path.join(self.out_dir, 'all.html')
-        self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
 
 if __name__ == '__main__':
     unittest.main()

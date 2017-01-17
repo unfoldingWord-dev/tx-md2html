@@ -81,14 +81,12 @@ class TransformOBS(object):
         with open(os.path.join(current_dir, 'obs-template.html')) as template_file:
             html_template = string.Template(template_file.read())
 
-        complete_html = ''
         for filename in files:
             if filename.endswith('.md'):
                 # read the markdown file
                 with codecs.open(filename, 'r', 'utf-8-sig') as md_file:
                     md = md_file.read()
                 html = markdown.markdown(md)
-                complete_html += html
                 html = html_template.safe_substitute(content=html)
                 html_filename = os.path.splitext(os.path.basename(filename))[0] + ".html"
                 output_file = os.path.join(self.output_dir, html_filename)
@@ -115,9 +113,6 @@ class TransformOBS(object):
             self.warning_message(warning)
         for error in inspector.errors:
             self.error_message(error)
-
-        complete_html = html_template.safe_substitute(content=complete_html)
-        write_file(os.path.join(self.output_dir, 'all.html'), complete_html)
 
         self.log_message('Made one HTML of all stories in all.html.')
         self.log_message('Finished processing Markdown files.')
