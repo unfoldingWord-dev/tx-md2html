@@ -38,9 +38,9 @@ setup(
         'git+git://github.com/unfoldingWord-dev/uw_tools.git#egg=uw_tools',
     ],
     install_requires=[
-        'markdown',
-        'requests',
-        'uw_tools'
+        'markdown==2.6.7',
+        'requests==2.12.4',
+        'uw_tools==0.0.6'
     ],
     test_suite='tests',
     cmdclass={

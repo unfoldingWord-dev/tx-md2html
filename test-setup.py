@@ -12,9 +12,9 @@ setup(
     long_description='Unit test setup file',
     classifiers=[],
     install_requires=[
-        'markdown',
-        'requests',
-        'tx-shared-tools'
+        'markdown==2.6.7',
+        'requests==2.12.4',
+        'uw_tools==0.0.5'
     ],
     test_suite='tests'
 )
