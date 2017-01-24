@@ -23,6 +23,7 @@ class TestTransformOBS(unittest.TestCase):
         Runs before each test
         """
         self.out_dir = ''
+        self.temp_dir = ""
 
     def tearDown(self):
         """
@@ -31,6 +32,8 @@ class TestTransformOBS(unittest.TestCase):
         # delete temp files
         if os.path.isdir(self.out_dir):
             shutil.rmtree(self.out_dir, ignore_errors=True)
+        if os.path.isdir(self.temp_dir):
+            shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     @classmethod
     def setUpClass(cls):
@@ -101,9 +104,9 @@ class TestTransformOBS(unittest.TestCase):
         file_path = os.path.join(self.resources_dir, file_name)
 
         # 1) unzip the repo files
-        temp_dir = tempfile.mkdtemp(prefix='repo_')
-        unzip(file_path, temp_dir)
-        repo_dir = os.path.join(temp_dir, repo_name)
+        self.temp_dir = tempfile.mkdtemp(prefix='repo_')
+        unzip(file_path, self.temp_dir)
+        repo_dir = os.path.join(self.temp_dir, repo_name)
         if not os.path.isdir(repo_dir):
             repo_dir = file_path
 
@@ -127,13 +130,10 @@ class TestTransformOBS(unittest.TestCase):
         # 3) Zip up the massaged files
         # context.aws_request_id is a unique ID for this lambda call, so using it to not conflict with other requests
         zip_filename = 'preprocessed.zip'
-        zip_filepath = os.path.join(file_path, zip_filename)
+        zip_filepath = os.path.join(self.temp_dir, zip_filename)
         add_contents_to_zip(zip_filepath, output_dir)
         if os.path.isfile(manifest_path) and not os.path.isfile(os.path.join(output_dir, 'manifest.json')):
             add_file_to_zip(zip_filepath, manifest_path, 'manifest.json')
-
-        # delete temp files
-        shutil.rmtree(temp_dir, ignore_errors=True)
 
         return zip_filepath
 
