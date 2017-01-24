@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-# Transforms OBS from md to html
+# test Transform OBS from md to html using internal files
 
 from __future__ import print_function, unicode_literals
 
@@ -79,10 +77,7 @@ class TransformOBS(object):
         # read the markdown files and output html files
         self.log_message('Processing the OBS markdown files')
 
-        # first check for files in content folder (useful for testing with OBS source)
-        files = self.checkForContentSubFolder()
-        if len(files) == 0: # if empty, check in flat directory structure
-            files = sorted(glob(os.path.join(self.files_dir, '*')))
+        files = sorted(glob(os.path.join(self.files_dir, '*')))
 
         current_dir = os.path.dirname(os.path.realpath(__file__))
         with open(os.path.join(current_dir, 'obs-template.html')) as template_file:
@@ -115,15 +110,15 @@ class TransformOBS(object):
                 for error in inspector.errors:
                     self.error_message(error)
         else:
-                # copy files that are not md files
-                try:
-                    output_file = os.path.join(self.output_dir, filename[len(self.files_dir)+1:])
-                    if not os.path.exists(output_file):
-                        if not os.path.exists(os.path.dirname(output_file)):
-                            os.makedirs(os.path.dirname(output_file))
-                        copyfile(filename, output_file)
-                except Exception:
-                    pass
+            # copy files that are not md files
+            try:
+                output_file = os.path.join(self.output_dir, filename[len(self.files_dir)+1:])
+                if not os.path.exists(output_file):
+                    if not os.path.exists(os.path.dirname(output_file)):
+                        os.makedirs(os.path.dirname(output_file))
+                    copyfile(filename, output_file)
+            except Exception:
+                pass
 
         complete_html = html_template.safe_substitute(content=complete_html)
         write_file(os.path.join(self.output_dir, 'all.html'), complete_html)
@@ -131,11 +126,3 @@ class TransformOBS(object):
         self.log_message('Made one HTML of all stories in all.html.')
         self.log_message('Finished processing Markdown files.')
 
-    def checkForContentSubFolder(self):
-        files = []
-        for root, dirs, filenames in os.walk(self.files_dir):
-            if root.endswith("content"):  # only care about content subfolder
-                for basename in filenames:
-                    filepath = os.path.join(root, basename)
-                    files.append(filepath)
-        return files
