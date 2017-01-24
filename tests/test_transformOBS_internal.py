@@ -66,39 +66,88 @@ class TestTransformOBS(unittest.TestCase):
         self.assertFalse(os.path.isdir(download_dir))
         self.assertFalse(os.path.isdir(files_dir))
 
-    def test_run(self):
+    def test_complete(self):
         """
         Runs the converter and verifies the output
         """
 
-        # print ("door43_tools.__version__={0}", door43_tools.__version__)
+        # given
+        file_name = 'aab_obs_text_obs.zip'
+        repo_name = 'aab_obs_text_obs'
+        expected_warnings = 0
+        expected_errors= 0
+        zip_filepath = self.preprocessOBS(repo_name, file_name)
 
-        # test with the English OBS
+        # when
+        tx = self.doTransformObs(zip_filepath)# verify the output
+
+        #then
+        self.verifyTransform(expected_errors, expected_warnings, tx)
+
+
+    def test_missing_fragment(self):
+        """
+        Runs the converter and verifies the output
+        """
+
+        # given
         file_name = 'aab_obs_text_obs_missing_fragment_01_01.zip'
         repo_name = 'aab_obs_text_obs'
         expected_warnings = 1
         expected_errors= 0
         zip_filepath = self.preprocessOBS(repo_name, file_name)
 
-        self.out_dir = tempfile.mkdtemp(prefix='txOBS_Test_')
-        with closing(TransformOBS(None, self.out_dir, True)) as tx:
-            tx.run(zip_filepath)
+        # when
+        tx = self.doTransformObs(zip_filepath)# verify the output
 
-        # verify the output
+        #then
+        self.verifyTransform(expected_errors, expected_warnings, tx)
+
+
+    def test_missing_chapter(self):
+        """
+        Runs the converter and verifies the output
+        """
+
+        # given
+        file_name = 'aab_obs_text_obs missing_chapter_01.zip'
+        repo_name = 'aab_obs_text_obs'
+        expected_warnings = 0
+        expected_errors= 0
+        missing_chapters = [1]
+        zip_filepath = self.preprocessOBS(repo_name, file_name)
+
+        # when
+        tx = self.doTransformObs(zip_filepath)# verify the output
+
+        #then
+        self.verifyTransform(expected_errors, expected_warnings, tx, missing_chapters)
+
+
+    def verifyTransform(self, expected_errors, expected_warnings, tx, missing_chapters = []):
         # 07 JAN 2017, NB: currently just one html file is being output, all.html
         files_to_verify = []
         for i in range(1, 51):
-            files_to_verify.append(str(i).zfill(2) + '.html')
-
+            if not i in missing_chapters:
+                files_to_verify.append(str(i).zfill(2) + '.html')
         for file_to_verify in files_to_verify:
             file_name = os.path.join(self.out_dir, file_to_verify)
             self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
-
         file_name = os.path.join(self.out_dir, 'all.html')
         self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
+        for warning in tx.warnings:
+            print("Warning: " + warning)
+        for error in tx.errors:
+            print("Error: " + error)
         self.assertEqual(len(tx.warnings), expected_warnings)
         self.assertEqual(len(tx.errors), expected_errors)
 
+
+    def doTransformObs(self, zip_filepath):
+        self.out_dir = tempfile.mkdtemp(prefix='txOBS_Test_')
+        with closing(TransformOBS(None, self.out_dir, True)) as tx:
+            tx.run(zip_filepath)
+        return tx
 
     def preprocessOBS(self, repo_name, file_name):
         file_path = os.path.join(self.resources_dir, file_name)
