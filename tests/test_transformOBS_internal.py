@@ -110,7 +110,7 @@ class TestTransformOBS(unittest.TestCase):
         """
 
         # given
-        file_name = 'aab_obs_text_obs missing_chapter_01.zip'
+        file_name = 'aab_obs_text_obs-missing_chapter_01.zip'
         repo_name = 'aab_obs_text_obs'
         expected_warnings = 0
         expected_errors= 0
@@ -127,12 +127,22 @@ class TestTransformOBS(unittest.TestCase):
     def verifyTransform(self, expected_errors, expected_warnings, tx, missing_chapters = []):
         # 07 JAN 2017, NB: currently just one html file is being output, all.html
         files_to_verify = []
+        files_missing = []
         for i in range(1, 51):
+            file_name = str(i).zfill(2) + '.html'
             if not i in missing_chapters:
-                files_to_verify.append(str(i).zfill(2) + '.html')
+                files_to_verify.append(file_name)
+            else:
+                files_missing.append(file_name)
+
         for file_to_verify in files_to_verify:
             file_name = os.path.join(self.out_dir, file_to_verify)
             self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
+
+        for file_to_verify in files_missing:
+            file_name = os.path.join(self.out_dir, file_to_verify)
+            self.assertFalse(os.path.isfile(file_name), 'OBS HTML file present, but should not be: {0}'.format(file_name))
+
         file_name = os.path.join(self.out_dir, 'all.html')
         self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
         for warning in tx.warnings:
