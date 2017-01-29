@@ -24,6 +24,7 @@ class TestTransformOBS(unittest.TestCase):
         """
         self.out_dir = ''
         self.temp_dir = ""
+        self.temp_dir2 = ""
 
     def tearDown(self):
         """
@@ -34,6 +35,8 @@ class TestTransformOBS(unittest.TestCase):
             shutil.rmtree(self.out_dir, ignore_errors=True)
         if os.path.isdir(self.temp_dir):
             shutil.rmtree(self.temp_dir, ignore_errors=True)
+        if os.path.isdir(self.temp_dir2):
+            shutil.rmtree(self.temp_dir2, ignore_errors=True)
 
     @classmethod
     def setUpClass(cls):
@@ -65,6 +68,45 @@ class TestTransformOBS(unittest.TestCase):
         # now they should have been deleted
         self.assertFalse(os.path.isdir(download_dir))
         self.assertFalse(os.path.isdir(files_dir))
+
+    def test_completeMD(self):
+        """
+        Runs the converter and verifies the output
+        """
+
+        # given
+        file_name = 'markdown_sources/aab_obs_text_obs'
+        repo_name = 'aab_obs_text_obs'
+        expected_warnings = 0
+        expected_errors= 0
+        zip_filepath = self.packageFiles(repo_name, file_name)
+
+        # when
+        tx = self.doTransformObs(zip_filepath)# verify the output
+
+        #then
+        self.verifyTransform(expected_errors, expected_warnings, tx)
+
+
+    def test_missing_chapterMD(self):
+        """
+        Runs the converter and verifies the output
+        """
+
+        # given
+        file_name = 'markdown_sources/aab_obs_text_obs-missing_chapter_01'
+        repo_name = 'aab_obs_text_obs'
+        expected_warnings = 0
+        expected_errors= 0
+        missing_chapters = [1]
+        zip_filepath = self.packageFiles(repo_name, file_name)
+
+        # when
+        tx = self.doTransformObs(zip_filepath)# verify the output
+
+        #then
+        self.verifyTransform(expected_errors, expected_warnings, tx, missing_chapters)
+
 
     def test_complete(self):
         """
@@ -159,7 +201,7 @@ class TestTransformOBS(unittest.TestCase):
             tx.run(zip_filepath)
         return tx
 
-    def preprocessOBS(self, repo_name, file_name):
+    def preprocessOBS(self, repo_name, file_name): # emulates the preprocessing of the raw files
         file_path = os.path.join(self.resources_dir, file_name)
 
         # 1) unzip the repo files
@@ -182,17 +224,27 @@ class TestTransformOBS(unittest.TestCase):
         manifest = Manifest(file_name=manifest_path, repo_name=repo_name, files_path=repo_dir, meta=meta)
 
         # run OBS Preprocessor
-        output_dir = tempfile.mkdtemp(prefix='output_')
-        compiler = TsObsMarkdownPreprocessor(manifest, repo_dir, output_dir)
+        self.temp_dir2 = tempfile.mkdtemp(prefix='output_')
+        compiler = TsObsMarkdownPreprocessor(manifest, repo_dir, self.temp_dir2)
         compiler.run()
 
         # 3) Zip up the massaged files
         # context.aws_request_id is a unique ID for this lambda call, so using it to not conflict with other requests
         zip_filename = 'preprocessed.zip'
         zip_filepath = os.path.join(self.temp_dir, zip_filename)
-        add_contents_to_zip(zip_filepath, output_dir)
-        if os.path.isfile(manifest_path) and not os.path.isfile(os.path.join(output_dir, 'manifest.json')):
+        add_contents_to_zip(zip_filepath, self.temp_dir2)
+        if os.path.isfile(manifest_path) and not os.path.isfile(os.path.join(self.temp_dir2, 'manifest.json')):
             add_file_to_zip(zip_filepath, manifest_path, 'manifest.json')
+
+        return zip_filepath
+
+    def packageFiles(self, repo_name, file_name): # emulates the preprocessing of the raw files
+        file_path = os.path.join(self.resources_dir, file_name)
+        self.temp_dir = tempfile.mkdtemp(prefix='repo_')
+
+        zip_filename = 'preprocessed.zip'
+        zip_filepath = os.path.join(self.temp_dir, zip_filename)
+        add_contents_to_zip(zip_filepath, file_path)
 
         return zip_filepath
 

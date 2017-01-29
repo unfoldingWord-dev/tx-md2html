@@ -29,7 +29,7 @@ class TransformOBS(object):
         self.log = []
         self.warnings = []
         self.errors = []
-        self.failed = False;
+        self.failed = False
 
     def log_message(self, message):
         print(message)
