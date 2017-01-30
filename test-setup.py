@@ -13,8 +13,8 @@ setup(
     classifiers=[],
     install_requires=[
         'markdown==2.6.7',
-        'requests==2.12.4',
-        'uw_tools==0.0.5'
+        'requests==2.13.0',
+        'uw_tools==0.0.6'
     ],
     test_suite='tests'
 )

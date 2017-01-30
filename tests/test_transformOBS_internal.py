@@ -8,8 +8,7 @@ from contextlib import closing
 import unittest
 from functions.convert.transform_obs import TransformOBS
 
-from general_tools.file_utils import unzip, get_subdirs, write_file, add_contents_to_zip, add_file_to_zip
-from general_tools.url_utils import download_file
+from general_tools.file_utils import unzip, add_contents_to_zip, add_file_to_zip
 from door43_tools.preprocessors import TsObsMarkdownPreprocessor
 from door43_tools.manifest_handler import Manifest, MetaData
 
