@@ -1,15 +1,11 @@
-# test Transform OBS from md to html using external url
-
-from __future__ import print_function, unicode_literals
 import os
 import shutil
 import tempfile
-import door43_tools
 from contextlib import closing
 import unittest
 from functions.convert.transform_obs import TransformOBS
 
-
+# test Transform OBS from md to html using external url
 class TestTransformOBS(unittest.TestCase):
 
     def setUp(self):

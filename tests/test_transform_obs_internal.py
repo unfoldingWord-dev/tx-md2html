@@ -1,10 +1,9 @@
-# test Transform OBS from md to html using external url
+import unittest
 import codecs
 import os
 import shutil
 import tempfile
 from contextlib import closing
-import unittest
 
 from bs4 import BeautifulSoup
 
@@ -15,6 +14,7 @@ from door43_tools.preprocessors import TsObsMarkdownPreprocessor
 from door43_tools.manifest_handler import Manifest, MetaData
 
 
+# test Transform OBS from md to html using external url
 class TestTransformOBSInternal(unittest.TestCase):
 
     resources_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'resources')
@@ -180,12 +180,12 @@ class TestTransformOBSInternal(unittest.TestCase):
         for file_to_verify in files_to_verify:
             file_path = os.path.join(self.out_dir, file_to_verify)
             contents = self.getContents(file_path)
-            self.assertIsNotNone(contents, 'OBS HTML body contents not found: {0}'.format(file_path))
+            self.assertIsNotNone(contents, 'OBS HTML body contents not found: {0}'.format(os.path.basename(file_path)))
 
         for file_to_verify in files_missing:
             file_path = os.path.join(self.out_dir, file_to_verify)
             contents = self.getContents(file_path)
-            self.assertIsNone(contents, 'OBS HTML body contents present, but should not be: {0}'.format(file_path))
+            self.assertIsNone(contents, 'OBS HTML body contents present, but should not be: {0}'.format(os.path.basename(file_path)))
 
         for warning in tx.warnings:
             print("Warning: " + warning)
@@ -295,3 +295,4 @@ class TestTransformOBSInternal(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

@@ -1,2 +1,1 @@
-import tests.test_transformOBS_internal
-import tests.test_transformOBS
+from functions.convert.transform_obs import TransformOBS
