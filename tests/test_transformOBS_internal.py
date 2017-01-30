@@ -13,7 +13,7 @@ from door43_tools.preprocessors import TsObsMarkdownPreprocessor
 from door43_tools.manifest_handler import Manifest, MetaData
 
 
-class TestTransformOBS(unittest.TestCase):
+class TestTransformOBSInternal(unittest.TestCase):
 
     resources_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'resources')
 
