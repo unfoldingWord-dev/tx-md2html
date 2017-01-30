@@ -61,9 +61,6 @@ class TestTransformOBS(unittest.TestCase):
         """
         Runs the converter and verifies the output
         """
-
-        # print ("door43_tools.__version__={0}", door43_tools.__version__)
-
         # test with the English OBS
         repo = 'https://git.door43.org/Door43/en-obs/archive/master.zip'
         self.out_dir = tempfile.mkdtemp(prefix='txOBS_Test_')
@@ -71,7 +68,6 @@ class TestTransformOBS(unittest.TestCase):
             tx.run()
 
         # verify the output
-        # 07 JAN 2017, NB: currently just one html file is being output, all.html
         files_to_verify = []
         for i in range(1, 51):
             files_to_verify.append(str(i).zfill(2) + '.html')
@@ -79,9 +75,6 @@ class TestTransformOBS(unittest.TestCase):
         for file_to_verify in files_to_verify:
             file_name = os.path.join(self.out_dir, file_to_verify)
             self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
-
-        file_name = os.path.join(self.out_dir, 'all.html')
-        self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
 
 if __name__ == '__main__':
     unittest.main()

@@ -183,8 +183,6 @@ class TestTransformOBS(unittest.TestCase):
             file_name = os.path.join(self.out_dir, file_to_verify)
             self.assertFalse(os.path.isfile(file_name), 'OBS HTML file present, but should not be: {0}'.format(file_name))
 
-        file_name = os.path.join(self.out_dir, 'all.html')
-        self.assertTrue(os.path.isfile(file_name), 'OBS HTML file not found: {0}'.format(file_name))
         for warning in tx.warnings:
             print("Warning: " + warning)
         for error in tx.errors:
