@@ -1,3 +1,0 @@
-# Bibliai történetek
-
-__

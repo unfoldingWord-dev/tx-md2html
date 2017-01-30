@@ -51,6 +51,7 @@ class TestTransformOBS(unittest.TestCase):
         """
         pass
 
+
     def test_close(self):
         """
         This tests that the temp directories are deleted when the class is closed
@@ -74,14 +75,13 @@ class TestTransformOBS(unittest.TestCase):
         """
 
         # given
-        file_name = 'markdown_sources/aab_obs_text_obs'
-        repo_name = 'aab_obs_text_obs'
+        file_name = 'markdown_sources/aab_obs_text_obs.zip'
         expected_warnings = 0
         expected_errors= 0
-        zip_filepath = self.packageFiles(repo_name, file_name)
+        zip_filepath = os.path.join(self.resources_dir, file_name)
 
         # when
-        tx = self.doTransformObs(zip_filepath)# verify the output
+        tx = self.doTransformObs(zip_filepath)
 
         #then
         self.verifyTransform(expected_errors, expected_warnings, tx)
@@ -93,15 +93,14 @@ class TestTransformOBS(unittest.TestCase):
         """
 
         # given
-        file_name = 'markdown_sources/aab_obs_text_obs-missing_chapter_01'
-        repo_name = 'aab_obs_text_obs'
+        file_name = 'markdown_sources/aab_obs_text_obs-missing_chapter_01.zip'
         expected_warnings = 0
         expected_errors= 0
         missing_chapters = [1]
-        zip_filepath = self.packageFiles(repo_name, file_name)
+        zip_filepath = os.path.join(self.resources_dir, file_name)
 
         # when
-        tx = self.doTransformObs(zip_filepath)# verify the output
+        tx = self.doTransformObs(zip_filepath)
 
         #then
         self.verifyTransform(expected_errors, expected_warnings, tx, missing_chapters)
@@ -120,7 +119,7 @@ class TestTransformOBS(unittest.TestCase):
         zip_filepath = self.preprocessOBS(repo_name, file_name)
 
         # when
-        tx = self.doTransformObs(zip_filepath)# verify the output
+        tx = self.doTransformObs(zip_filepath)
 
         #then
         self.verifyTransform(expected_errors, expected_warnings, tx)
@@ -139,7 +138,7 @@ class TestTransformOBS(unittest.TestCase):
         zip_filepath = self.preprocessOBS(repo_name, file_name)
 
         # when
-        tx = self.doTransformObs(zip_filepath)# verify the output
+        tx = self.doTransformObs(zip_filepath)
 
         #then
         self.verifyTransform(expected_errors, expected_warnings, tx)
@@ -159,7 +158,7 @@ class TestTransformOBS(unittest.TestCase):
         zip_filepath = self.preprocessOBS(repo_name, file_name)
 
         # when
-        tx = self.doTransformObs(zip_filepath)# verify the output
+        tx = self.doTransformObs(zip_filepath)
 
         #then
         self.verifyTransform(expected_errors, expected_warnings, tx, missing_chapters)
@@ -247,6 +246,31 @@ class TestTransformOBS(unittest.TestCase):
 
         return zip_filepath
 
+
+    # def test_PackageResource(self):
+    #
+    #     #given
+    #     resource = 'markdown_sources'
+    #     repo_name = 'aab_obs_text_obs-missing_chapter_01'
+    #
+    #     # when
+    #     zip_file = self.packageResource(resource, repo_name)
+    #
+    #     #then
+    #     print(zip_file)
+
+
+    @classmethod
+    def createZipFile(self, zip_filename, destination_folder, source_folder):
+        zip_filepath = os.path.join(destination_folder, zip_filename)
+        add_contents_to_zip(zip_filepath, source_folder)
+        return zip_filepath
+
+    def packageResource(self, resource, repo_name):
+        source_folder = os.path.join(self.resources_dir, resource, repo_name)
+        self.temp_dir = tempfile.mkdtemp(prefix='repo_')
+        zip_filepath = self.createZipFile(repo_name + ".zip", self.temp_dir, source_folder)
+        return zip_filepath
 
 
 if __name__ == '__main__':
