@@ -53,7 +53,7 @@ class TestTransformOBS(unittest.TestCase):
         self.assertFalse(os.path.isdir(download_dir))
         self.assertFalse(os.path.isdir(files_dir))
 
-    @unittest.skip("disabled for now since master archive has changed?")
+    @unittest.skip("disabled for now since master archive format has changed")
     def test_run(self):
         """
         Runs the converter and verifies the output

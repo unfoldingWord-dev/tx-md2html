@@ -36,13 +36,12 @@ setup(
     classifiers=[],
     dependency_links=[
         'git+git://github.com/unfoldingWord-dev/uw_tools.git#egg=uw_tools',
-        'https://github.com/unfoldingWord-dev/tx-manager/tarball/develop#egg=tx-manager',
+        'git+git://github.com/unfoldingWord-dev/tx-manager.git@develop#egg=tx-manager',
     ],
     install_requires=[
         'markdown',
         'requests',
-        'tx-manager',
-        'uw_tools'
+        'tx-manager'
     ],
     test_suite='tests',
     cmdclass={

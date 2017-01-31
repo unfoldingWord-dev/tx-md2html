@@ -12,12 +12,11 @@ setup(
     long_description='Unit test setup file',
     classifiers=[],
     dependency_links=[
-        'https://github.com/unfoldingWord-dev/tx-manager/tarball/develop#egg=tx-manager',
+        'git+git://github.com/unfoldingWord-dev/tx-manager.git@develop#egg=tx-manager',
     ],
     install_requires=[
         'markdown',
-        'requests==2.13.0',
-        'uw_tools==0.0.6',
+        'requests',
         'bs4',
         'tx-manager'
     ],

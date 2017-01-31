@@ -3,18 +3,34 @@ import codecs
 import os
 import shutil
 import tempfile
+import zipfile
 from contextlib import closing
+import pkg_resources
 
 from bs4 import BeautifulSoup
 
 from functions.convert.transform_obs import TransformOBS
 
-from general_tools.file_utils import unzip, add_contents_to_zip, add_file_to_zip
-from door43_tools.preprocessors import TsObsMarkdownPreprocessor
-from door43_tools.manifest_handler import Manifest, MetaData
+from general_tools.file_utils import unzip, add_file_to_zip
+
 
 
 # test Transform OBS from md to html using external url
+
+class Version(object):
+    @classmethod
+    def atLeast(cls, package, minimum_version):  # returns true if
+        try:
+            pkg_version = pkg_resources.get_distribution(package).version
+            print("Found version for {0} = {1}".format(package,pkg_version))
+            satisfies_minimum = pkg_resources.parse_version(pkg_version) >= pkg_resources.parse_version(minimum_version)
+            print("Version requirements satisfied: {0}".format(satisfies_minimum))
+            return satisfies_minimum
+        except:
+            print("Could not find version for {0}".format(package))
+            return False
+
+
 class TestTransformOBSInternal(unittest.TestCase):
 
     resources_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'resources')
@@ -71,6 +87,8 @@ class TestTransformOBSInternal(unittest.TestCase):
         self.assertFalse(os.path.isdir(download_dir))
         self.assertFalse(os.path.isdir(files_dir))
 
+
+    @unittest.skipUnless(Version.atLeast("tx-manager", '0.2.0'), "not supported in this library version")
     def test_completeMD(self):
         """
         Runs the converter and verifies the output
@@ -89,6 +107,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         self.verifyTransform(expected_errors, expected_warnings, tx)
 
 
+    @unittest.skipUnless(Version.atLeast("tx-manager", '0.2.0'), "not supported in this library version")
     def test_missing_chapterMD(self):
         """
         Runs the converter and verifies the output
@@ -108,6 +127,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         self.verifyTransform(expected_errors, expected_warnings, tx, missing_chapters)
 
 
+    @unittest.skipUnless(Version.atLeast("tx-manager", '0.2.0'), "not supported in this library version")
     def test_complete(self):
         """
         Runs the converter and verifies the output
@@ -127,6 +147,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         self.verifyTransform(expected_errors, expected_warnings, tx)
 
 
+    @unittest.skipUnless(Version.atLeast("tx-manager", '0.2.0'), "not supported in this library version")
     def test_missing_fragment(self):
         """
         Runs the converter and verifies the output
@@ -146,6 +167,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         self.verifyTransform(expected_errors, expected_warnings, tx)
 
 
+    @unittest.skipUnless(Version.atLeast("tx-manager", '0.2.0'), "not supported in this library version")
     def test_missing_chapter(self):
         """
         Runs the converter and verifies the output
@@ -219,7 +241,25 @@ class TestTransformOBSInternal(unittest.TestCase):
             tx.run(zip_filepath)
         return tx
 
+    @classmethod
+    def add_contents_to_zip(cls, zip_file, path):
+        """
+        Zip the contents of <path> into <zip_file>.
+        :param str|unicode zip_file: The file name of the zip file
+        :param str|unicode path: Full path of the directory to zip up
+        """
+        path = path.rstrip(os.sep)
+        with zipfile.ZipFile(zip_file, 'a') as zf:
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    zf.write(file_path, file_path[len(path)+1:])
+
     def preprocessOBS(self, repo_name, file_name): # emulates the preprocessing of the raw files
+
+        from door43_tools.manifest_handler import MetaData, Manifest
+        from door43_tools.preprocessors import TsObsMarkdownPreprocessor
+
         file_path = os.path.join(self.resources_dir, file_name)
 
         # 1) unzip the repo files
@@ -250,7 +290,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         # context.aws_request_id is a unique ID for this lambda call, so using it to not conflict with other requests
         zip_filename = 'preprocessed.zip'
         zip_filepath = os.path.join(self.temp_dir, zip_filename)
-        add_contents_to_zip(zip_filepath, self.temp_dir2)
+        self.add_contents_to_zip(zip_filepath, self.temp_dir2)
         if os.path.isfile(manifest_path) and not os.path.isfile(os.path.join(self.temp_dir2, 'manifest.json')):
             add_file_to_zip(zip_filepath, manifest_path, 'manifest.json')
 
@@ -262,7 +302,7 @@ class TestTransformOBSInternal(unittest.TestCase):
 
         zip_filename = 'preprocessed.zip'
         zip_filepath = os.path.join(self.temp_dir, zip_filename)
-        add_contents_to_zip(zip_filepath, file_path)
+        self.add_contents_to_zip(zip_filepath, file_path)
 
         return zip_filepath
 
@@ -281,9 +321,9 @@ class TestTransformOBSInternal(unittest.TestCase):
 
 
     @classmethod
-    def createZipFile(self, zip_filename, destination_folder, source_folder):
+    def createZipFile(cls, zip_filename, destination_folder, source_folder):
         zip_filepath = os.path.join(destination_folder, zip_filename)
-        add_contents_to_zip(zip_filepath, source_folder)
+        cls. add_contents_to_zip(zip_filepath, source_folder)
         return zip_filepath
 
     def packageResource(self, resource, repo_name):
