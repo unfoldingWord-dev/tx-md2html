@@ -20,20 +20,26 @@ from general_tools.file_utils import unzip, add_file_to_zip
 class Version(object):
     @classmethod
     def atLeast(cls, package, minimum_version):  # returns true if
+        pkg_version = cls.packageVersion(package)
+        satisfies_minimum = pkg_resources.parse_version(pkg_version) >= pkg_resources.parse_version(minimum_version) if pkg_version else False
+        print("Version requirements satisfied: {0}".format(satisfies_minimum))
+        return satisfies_minimum
+
+    @classmethod
+    def packageVersion(cls, package):
         try:
             pkg_version = pkg_resources.get_distribution(package).version
-            print("Found version for {0} = {1}".format(package,pkg_version))
-            satisfies_minimum = pkg_resources.parse_version(pkg_version) >= pkg_resources.parse_version(minimum_version)
-            print("Version requirements satisfied: {0}".format(satisfies_minimum))
-            return satisfies_minimum
+            print("Found version for {0} = {1}".format(package, pkg_version))
+            return pkg_version
         except:
             print("Could not find version for {0}".format(package))
-            return False
+            return None
 
 
 class TestTransformOBSInternal(unittest.TestCase):
 
     resources_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'resources')
+    version_tx_shared = Version.packageVersion("tx-shared_tools")
 
     def setUp(self):
         """
