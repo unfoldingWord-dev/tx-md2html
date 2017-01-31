@@ -24,7 +24,7 @@ class PostInstallCommand(install):
 
 setup(
     name="tx-md2html",
-    version="0.0.1",
+    version="0.0.2",
     author="unfoldingWord",
     author_email="unfoldingword.org",
     description="A library of Python scripts to convert a git repository into publishable text.",

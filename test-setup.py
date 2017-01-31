@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="tx-md2html",
-    version="0.0.1",
+    version="0.0.2",
     author="unfoldingWord",
     author_email="unfoldingword.org",
     description="Unit test setup file.",
