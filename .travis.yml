@@ -7,11 +7,12 @@ before_install:
 - eval export AWS_ACCESS_KEY_ID=\$${TRAVIS_BRANCH}_aws_access_key_id
 - eval export AWS_SECRET_ACCESS_KEY=\$${TRAVIS_BRANCH}_aws_secret_access_key
 - eval export AWS_REGION=\$${TRAVIS_BRANCH}_aws_region
-- pip list
 install:
 - bash install-requirements.sh
 - pip install coveralls
-- pip freeze
+- pip list
+before_script:
+- coverage run test-setup.py install
 script:
 - coverage run test-setup.py test
 after_success:
