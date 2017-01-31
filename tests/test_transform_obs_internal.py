@@ -12,7 +12,9 @@ from bs4 import BeautifulSoup
 from functions.convert.transform_obs import TransformOBS
 
 from general_tools.file_utils import unzip, add_file_to_zip
-
+from door43_tools.obs_handler import OBSInspection
+from door43_tools.manifest_handler import MetaData, Manifest
+from door43_tools.preprocessors import TsObsMarkdownPreprocessor
 
 
 # test Transform OBS from md to html using external url
@@ -29,10 +31,10 @@ class Version(object):
     def packageVersion(cls, package):
         try:
             pkg_version = pkg_resources.get_distribution(package).version
-            print("Found version for {0} = {1}".format(package, pkg_version))
+            print("Found version for '{0}': {1}".format(package, pkg_version))
             return pkg_version
         except:
-            print("Could not find version for {0}".format(package))
+            print("Could not find version for '{0}'".format(package))
             return None
 
 
@@ -262,9 +264,6 @@ class TestTransformOBSInternal(unittest.TestCase):
                     zf.write(file_path, file_path[len(path)+1:])
 
     def preprocessOBS(self, repo_name, file_name): # emulates the preprocessing of the raw files
-
-        from door43_tools.manifest_handler import MetaData, Manifest
-        from door43_tools.preprocessors import TsObsMarkdownPreprocessor
 
         file_path = os.path.join(self.resources_dir, file_name)
 
