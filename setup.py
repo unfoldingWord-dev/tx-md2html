@@ -24,7 +24,7 @@ class PostInstallCommand(install):
 
 setup(
     name="tx-md2html",
-    version="0.0.1",
+    version="0.0.3",
     author="unfoldingWord",
     author_email="unfoldingword.org",
     description="A library of Python scripts to convert a git repository into publishable text.",
@@ -36,11 +36,12 @@ setup(
     classifiers=[],
     dependency_links=[
         'git+git://github.com/unfoldingWord-dev/uw_tools.git#egg=uw_tools',
+        'git+git://github.com/unfoldingWord-dev/tx-manager.git@develop#egg=tx-manager',
     ],
     install_requires=[
         'markdown',
         'requests',
-        'uw_tools'
+        'tx-manager'
     ],
     test_suite='tests',
     cmdclass={

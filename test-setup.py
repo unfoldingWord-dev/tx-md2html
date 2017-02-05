@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="tx-md2html",
-    version="0.0.1",
+    version="0.0.3",
     author="unfoldingWord",
     author_email="unfoldingword.org",
     description="Unit test setup file.",
@@ -11,10 +11,14 @@ setup(
     url="https://github.org/unfoldingWord-dev/tx-md2html",
     long_description='Unit test setup file',
     classifiers=[],
+    dependency_links=[
+        'git+git://github.com/unfoldingWord-dev/tx-manager.git@develop#egg=tx-manager',
+    ],
     install_requires=[
         'markdown',
         'requests',
-        'tx-shared-tools'
+        'bs4',
+        'tx-manager'
     ],
     test_suite='tests'
 )

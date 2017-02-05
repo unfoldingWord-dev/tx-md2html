@@ -10,10 +10,17 @@ before_install:
 install:
 - bash install-requirements.sh
 - pip install coveralls
+- pip list
+before_script:
+- coverage run test-setup.py install
+- pip freeze
+- pip list
 script:
 - coverage run test-setup.py test
 after_success:
 - coveralls
+after_script:
+- pip list
 deploy:
 - provider: script
   skip_cleanup: true

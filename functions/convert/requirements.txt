@@ -1,4 +1,4 @@
 markdown
 requests
-tx-shared-tools
+tx-manager
 
