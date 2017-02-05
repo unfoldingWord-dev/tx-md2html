@@ -103,7 +103,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         """
 
         # given
-        file_name = 'markdown_sources/aab_obs_text_obs.zip'
+        file_name = 'markdown_obs_sources/aab_obs_text_obs.zip'
         expected_warnings = 0
         expected_errors= 0
         zip_filepath = os.path.join(self.resources_dir, file_name)
@@ -122,7 +122,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         """
 
         # given
-        file_name = 'markdown_sources/aab_obs_text_obs-missing_chapter_01.zip'
+        file_name = 'markdown_obs_sources/aab_obs_text_obs-missing_chapter_01.zip'
         expected_warnings = 0
         expected_errors= 0
         missing_chapters = [1]
@@ -142,7 +142,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         """
 
         # given
-        file_name = 'aab_obs_text_obs.zip'
+        file_name = 'raw_obs_sources/aab_obs_text_obs.zip'
         repo_name = 'aab_obs_text_obs'
         expected_warnings = 0
         expected_errors= 0
@@ -162,7 +162,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         """
 
         # given
-        file_name = 'aab_obs_text_obs_missing_fragment_01_01.zip'
+        file_name = 'raw_obs_sources/aab_obs_text_obs_missing_fragment_01_01.zip'
         repo_name = 'aab_obs_text_obs'
         expected_warnings = 1
         expected_errors= 0
@@ -182,7 +182,7 @@ class TestTransformOBSInternal(unittest.TestCase):
         """
 
         # given
-        file_name = 'aab_obs_text_obs-missing_chapter_01.zip'
+        file_name = 'raw_obs_sources/aab_obs_text_obs-missing_chapter_01.zip'
         repo_name = 'aab_obs_text_obs'
         expected_warnings = 0
         expected_errors= 0
@@ -249,20 +249,6 @@ class TestTransformOBSInternal(unittest.TestCase):
             tx.run(zip_filepath)
         return tx
 
-    @classmethod
-    def add_contents_to_zip(cls, zip_file, path):
-        """
-        Zip the contents of <path> into <zip_file>.
-        :param str|unicode zip_file: The file name of the zip file
-        :param str|unicode path: Full path of the directory to zip up
-        """
-        path = path.rstrip(os.sep)
-        with zipfile.ZipFile(zip_file, 'a') as zf:
-            for root, dirs, files in os.walk(path):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    zf.write(file_path, file_path[len(path)+1:])
-
     def preprocessOBS(self, repo_name, file_name): # emulates the preprocessing of the raw files
 
         file_path = os.path.join(self.resources_dir, file_name)
@@ -315,7 +301,7 @@ class TestTransformOBSInternal(unittest.TestCase):
     # def test_PackageResource(self):
     #
     #     #given
-    #     resource = 'markdown_sources'
+    #     resource = 'markdown_obs_sources'
     #     repo_name = 'aab_obs_text_obs-missing_chapter_01'
     #
     #     # when
@@ -325,17 +311,31 @@ class TestTransformOBSInternal(unittest.TestCase):
     #     print(zip_file)
 
 
+    def packageResource(self, resource, repo_name):
+        source_folder = os.path.join(self.resources_dir, resource, repo_name)
+        self.temp_dir = tempfile.mkdtemp(prefix='repo_')
+        zip_filepath = self.createZipFile(repo_name + ".zip", self.temp_dir, source_folder)
+        return zip_filepath
+
     @classmethod
     def createZipFile(cls, zip_filename, destination_folder, source_folder):
         zip_filepath = os.path.join(destination_folder, zip_filename)
         cls. add_contents_to_zip(zip_filepath, source_folder)
         return zip_filepath
 
-    def packageResource(self, resource, repo_name):
-        source_folder = os.path.join(self.resources_dir, resource, repo_name)
-        self.temp_dir = tempfile.mkdtemp(prefix='repo_')
-        zip_filepath = self.createZipFile(repo_name + ".zip", self.temp_dir, source_folder)
-        return zip_filepath
+    @classmethod
+    def add_contents_to_zip(cls, zip_file, path):
+        """
+        Zip the contents of <path> into <zip_file>.
+        :param str|unicode zip_file: The file name of the zip file
+        :param str|unicode path: Full path of the directory to zip up
+        """
+        path = path.rstrip(os.sep)
+        with zipfile.ZipFile(zip_file, 'a') as zf:
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    zf.write(file_path, file_path[len(path)+1:])
 
 
 if __name__ == '__main__':
